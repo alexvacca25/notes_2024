@@ -5,10 +5,11 @@ import 'package:notes_2024/screens/widget/note_dialog.dart';
 import '../controllers/note_controller.dart';
 import '../models/note_model.dart';
 
-class NotesScreen extends StatelessWidget {
-  NotesScreen({super.key});
 
+class NotesScreen extends StatelessWidget {
   final NoteController noteController = Get.put(NoteController());
+
+  NotesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class NotesScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notas'),
+        title: const Text('Notas - P. Movil 2024'),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -33,25 +34,19 @@ class NotesScreen extends StatelessWidget {
               controller: searchController,
               isSearch: true,
               icon: Icons.search,
-              onChanged: (value) {
-                noteController.notes.value = noteController.notes.where((note) {
-                  return note.title
-                          .toLowerCase()
-                          .contains(value.toLowerCase()) ||
-                      note.content.toLowerCase().contains(value.toLowerCase());
-                }).toList();
-              },
+              // Aquí llamamos al método `filterNotes` del controlador
+              onChanged: (value) => noteController.filterNotes(value),
             ),
           ),
           Expanded(
             child: Obx(() {
-              if (noteController.notes.isEmpty) {
-                return const Center(child: Text('No hay notas'));
+              if (noteController.filteredNotes.isEmpty) {
+                return const  Center(child: Text('No hay notas'));
               }
               return ListView.builder(
-                itemCount: noteController.notes.length,
+                itemCount: noteController.filteredNotes.length,
                 itemBuilder: (context, index) {
-                  final note = noteController.notes[index];
+                  final note = noteController.filteredNotes[index];
                   return ListTile(
                     title: Text(note.title),
                     subtitle: Column(
@@ -60,16 +55,15 @@ class NotesScreen extends StatelessWidget {
                         Text(note.content),
                         Text(
                           'Creada hace ${note.daysSinceCreation()} días',
-                          style: TextStyle(color: Colors.grey),
+                          style: const TextStyle(color: Colors.grey),
                         ),
                       ],
                     ),
                     trailing: IconButton(
                       icon: const Icon(Icons.delete),
-                      onPressed: () => noteController.deleteNote(note.id),
+                      onPressed: () => _showDeleteConfirmation(context, note.id),
                     ),
-                    onTap: () =>
-                        _showNoteDialog(context, note: note, isEdit: true),
+                    onTap: () => _showNoteDialog(context, note: note, isEdit: true),
                   );
                 },
               );
@@ -80,8 +74,27 @@ class NotesScreen extends StatelessWidget {
     );
   }
 
-  void _showNoteDialog(BuildContext context,
-      {Note? note, bool isEdit = false}) {
+  // Función para mostrar el diálogo de confirmación antes de eliminar
+  void _showDeleteConfirmation(BuildContext context, String noteId) {
+    Get.defaultDialog(
+      title: "Confirmar eliminación",
+      middleText: "¿Estás seguro de que deseas eliminar esta nota?",
+      textCancel: "Cancelar",
+      textConfirm: "Eliminar",
+      confirmTextColor: Colors.white,
+      onConfirm: () {
+        noteController.deleteNote(noteId);
+        Get.back(); // Cerrar el diálogo después de eliminar
+        Get.snackbar("Nota eliminada", "La nota se ha eliminado correctamente.",
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      },
+      onCancel: () => Get.back(),
+    );
+  }
+
+  // Función para mostrar el diálogo de agregar/editar notas
+  void _showNoteDialog(BuildContext context, {Note? note, bool isEdit = false}) {
     showDialog(
       context: context,
       builder: (context) {
