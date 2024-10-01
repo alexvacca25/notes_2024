@@ -13,17 +13,15 @@ class Note {
     required this.date,
   });
 
-  
   factory Note.fromFirestore(Map<String, dynamic> data, String documentId) {
     return Note(
       id: documentId,
-      title: data['title'],
-      content: data['content'],
+      title: data['title'] ?? '',
+      content: data['content'] ?? '',
       date: (data['date'] as Timestamp).toDate(),
     );
   }
 
-  
   Map<String, dynamic> toMap() {
     return {
       'title': title,
@@ -32,7 +30,6 @@ class Note {
     };
   }
 
-  
   int daysSinceCreation() {
     final currentDate = DateTime.now();
     return currentDate.difference(date).inDays;

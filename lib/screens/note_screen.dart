@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:notes_2024/screens/categorias_screen.dart';
+import 'package:notes_2024/screens/form.dart';
+import 'package:notes_2024/screens/responsable.dart';
 import 'package:notes_2024/screens/widget/custom_textfield.dart';
 import 'package:notes_2024/screens/widget/note_dialog.dart';
 import '../controllers/note_controller.dart';
 import '../models/note_model.dart';
-
 
 class NotesScreen extends StatelessWidget {
   final NoteController noteController = Get.put(NoteController());
@@ -23,6 +25,11 @@ class NotesScreen extends StatelessWidget {
             icon: const Icon(Icons.add),
             onPressed: () => _showNoteDialog(context),
           ),
+          IconButton(
+              onPressed: () {
+                Get.to(() => ResponsableScreen());
+              },
+              icon: const Icon(Icons.person_add_alt)),
         ],
       ),
       body: Column(
@@ -30,9 +37,9 @@ class NotesScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: CustomTextField(
-              hintText: 'Buscar...',
+              hintText: 'Aqui buscando...',
               controller: searchController,
-              isSearch: true,
+              isSearch: false,
               icon: Icons.search,
               // Aquí llamamos al método `filterNotes` del controlador
               onChanged: (value) => noteController.filterNotes(value),
@@ -41,7 +48,7 @@ class NotesScreen extends StatelessWidget {
           Expanded(
             child: Obx(() {
               if (noteController.filteredNotes.isEmpty) {
-                return const  Center(child: Text('No hay notas'));
+                return const Center(child: Text('No hay Notas'));
               }
               return ListView.builder(
                 itemCount: noteController.filteredNotes.length,
@@ -52,7 +59,7 @@ class NotesScreen extends StatelessWidget {
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(note.content),
+                        Text(note.id),
                         Text(
                           'Creada hace ${note.daysSinceCreation()} días',
                           style: const TextStyle(color: Colors.grey),
@@ -61,15 +68,24 @@ class NotesScreen extends StatelessWidget {
                     ),
                     trailing: IconButton(
                       icon: const Icon(Icons.delete),
-                      onPressed: () => _showDeleteConfirmation(context, note.id),
+                      onPressed: () =>
+                          _showDeleteConfirmation(context, note.id),
                     ),
-                    onTap: () => _showNoteDialog(context, note: note, isEdit: true),
+                    onTap: () =>
+                        _showNoteDialog(context, note: note, isEdit: true),
                   );
                 },
               );
             }),
           ),
         ],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Get.to(() => CategoriasScreen());
+        },
+        child: const Icon(Icons.category),
       ),
     );
   }
@@ -85,7 +101,9 @@ class NotesScreen extends StatelessWidget {
       onConfirm: () {
         noteController.deleteNote(noteId);
         Get.back(); // Cerrar el diálogo después de eliminar
-        Get.snackbar("Nota eliminada", "La nota se ha eliminado correctamente.",
+        Get.snackbar(
+          "Nota eliminada",
+          "La nota se ha eliminado correctamente.",
           snackPosition: SnackPosition.BOTTOM,
         );
       },
@@ -94,7 +112,8 @@ class NotesScreen extends StatelessWidget {
   }
 
   // Función para mostrar el diálogo de agregar/editar notas
-  void _showNoteDialog(BuildContext context, {Note? note, bool isEdit = false}) {
+  void _showNoteDialog(BuildContext context,
+      {Note? note, bool isEdit = false}) {
     showDialog(
       context: context,
       builder: (context) {

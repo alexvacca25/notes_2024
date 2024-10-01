@@ -7,7 +7,7 @@ class NoteService {
 
   // Obtener todas las notas
   Future<List<Note>> getNotes() async {
-    QuerySnapshot querySnapshot = await _firestore.collection(notesCollection).get();
+    QuerySnapshot querySnapshot = await _firestore.collection('notes').get();
     return querySnapshot.docs.map((doc) {
       return Note.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
     }).toList();
@@ -20,7 +20,10 @@ class NoteService {
 
   // Actualizar una nota existente
   Future<void> updateNote(Note note) async {
-    await _firestore.collection(notesCollection).doc(note.id).update(note.toMap());
+    await _firestore
+        .collection(notesCollection)
+        .doc(note.id)
+        .update(note.toMap());
   }
 
   // Eliminar una nota

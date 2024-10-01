@@ -8,13 +8,15 @@ class NoteDialog extends StatelessWidget {
   final Note? note;
   final bool isEdit;
   final NoteController noteController = Get.find();
-  
+
   NoteDialog({super.key, this.note, this.isEdit = false});
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController titleController = TextEditingController(text: note?.title ?? '');
-    TextEditingController contentController = TextEditingController(text: note?.content ?? '');
+    TextEditingController titleController =
+        TextEditingController(text: note?.title ?? '');
+    TextEditingController contentController =
+        TextEditingController(text: note?.content ?? '');
 
     return AlertDialog(
       title: Text(isEdit ? 'Editar Nota' : 'Agregar Nota'),

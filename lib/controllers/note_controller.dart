@@ -4,19 +4,20 @@ import '../services/note_service.dart';
 
 class NoteController extends GetxController {
   final NoteService _noteService = NoteService();
-  RxList<Note> notes = <Note>[].obs;          // Todas las notas
-  RxList<Note> filteredNotes = <Note>[].obs;   // Notas filtradas
+  RxList<Note> notes = <Note>[].obs; // Todas las notas
+  RxList<Note> filteredNotes = <Note>[].obs; // Notas filtradas
 
   @override
   void onInit() {
     super.onInit();
-    fetchNotes();  // Obtener todas las notas al iniciar
+    fetchNotes(); // Obtener todas las notas al iniciar
   }
 
   // Obtener todas las notas desde Firestore a través del servicio
   void fetchNotes() async {
     notes.value = await _noteService.getNotes();
-    filteredNotes.value = notes;  // Inicialmente, las notas filtradas son todas las notas
+    filteredNotes.value =
+        notes; // Inicialmente, las notas filtradas son todas las notas
   }
 
   // Método para filtrar las notas
@@ -28,7 +29,7 @@ class NoteController extends GetxController {
       // Filtrar las notas basadas en el título o contenido
       filteredNotes.value = notes.where((note) {
         return note.title.toLowerCase().contains(query.toLowerCase()) ||
-               note.content.toLowerCase().contains(query.toLowerCase());
+            note.content.toLowerCase().contains(query.toLowerCase());
       }).toList();
     }
   }
@@ -36,18 +37,18 @@ class NoteController extends GetxController {
   // Agregar una nota a través del servicio
   Future<void> addNote(Note note) async {
     await _noteService.addNote(note);
-    fetchNotes();  // Refrescar la lista de notas después de agregar
+    fetchNotes(); // Refrescar la lista de notas después de agregar
   }
 
   // Actualizar una nota a través del servicio
   Future<void> updateNote(Note note) async {
     await _noteService.updateNote(note);
-    fetchNotes();  // Refrescar la lista de notas después de actualizar
+    fetchNotes(); // Refrescar la lista de notas después de actualizar
   }
 
   // Eliminar una nota a través del servicio
   Future<void> deleteNote(String noteId) async {
     await _noteService.deleteNote(noteId);
-    fetchNotes();  // Refrescar la lista de notas después de eliminar
+    fetchNotes(); // Refrescar la lista de notas después de eliminar
   }
 }

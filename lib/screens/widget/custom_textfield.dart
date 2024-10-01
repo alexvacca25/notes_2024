@@ -7,7 +7,8 @@ class CustomTextField extends StatelessWidget {
   final bool isSearch;
   final Function(String)? onChanged;
 
-  const CustomTextField({super.key, 
+  const CustomTextField({
+    super.key,
     required this.hintText,
     required this.controller,
     this.icon,
@@ -17,23 +18,26 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      onChanged: onChanged,
-      decoration: InputDecoration(
-        prefixIcon: icon != null ? Icon(icon) : null,
-        suffixIcon: isSearch ? const Icon(Icons.search) : null,
-        hintText: hintText,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.grey),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextField(
+        controller: controller,
+        onChanged: onChanged,
+        decoration: InputDecoration(
+          prefixIcon: icon != null ? Icon(icon) : null,
+          suffixIcon: isSearch ? const Icon(Icons.search) : null,
+          hintText: hintText,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.grey),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Theme.of(context).primaryColor),
+          ),
+          filled: true,
+          fillColor: Colors.grey[200],
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Theme.of(context).primaryColor),
-        ),
-        filled: true,
-        fillColor: Colors.grey[200],
       ),
     );
   }
